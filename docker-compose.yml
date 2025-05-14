@@ -1,0 +1,19 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - autovideo
+
+  autovideo:
+    build: ./autovideo
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./autovideo:/app/autovideo
+
+networks:
+  app-network:
+    driver: bridge

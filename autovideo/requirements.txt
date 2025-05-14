@@ -1,0 +1,16 @@
+fastapi 
+uvicorn 
+python-multipart 
+pandas 
+requests
+torch==1.8.1 
+torchvision==0.9.1 
+ray[tune]
+hyperopt 
+numpy==1.21.2 
+python-dateutil==2.8.2 
+PyYAML==5.4.1 
+scipy==1.7.1
+networkx==2.4 
+scikit-image==0.18.3 
+pymongo
