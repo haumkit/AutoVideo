@@ -1,6 +1,0 @@
-fastapi==0.68.1
-uvicorn==0.15.0
-python-multipart==0.0.5
-httpx==0.23.0
-pandas
-requests

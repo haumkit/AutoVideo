@@ -13,6 +13,8 @@ services:
       - "9000:9000"
     volumes:
       - ./autovideo:/app/autovideo
+    environment:
+      - PYTHONPATH=/app/autovideo
 
 networks:
   app-network:
