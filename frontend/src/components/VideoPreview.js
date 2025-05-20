@@ -1,55 +1,83 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 
-const VideoPreview = ({ videoUrl }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [videoFormat, setVideoFormat] = useState('');
-    const videoRef = useRef(null);
-
-    useEffect(() => {
-        // Xác định định dạng video từ URL
-        const format = videoUrl.toLowerCase().endsWith('.avi') ? 'video/x-msvideo' : 'video/mp4';
-        setVideoFormat(format);
-    }, [videoUrl]);
-
-    const handlePlayPause = () => {
-        if (videoRef.current) {
-            if (isPlaying) {
-                videoRef.current.pause();
-            } else {
-                videoRef.current.play();
-            }
-            setIsPlaying(!isPlaying);
-        }
-    };
+function VideoPreview({ showPreview, setShowPreview, previewVideo, setPreviewVideo, videoUrls }) {
+    if (!showPreview || !previewVideo) return null;
 
     return (
-        <div className="video-preview">
-            <video
-                ref={videoRef}
-                controls
-                className="w-full h-auto"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-            >
-                <source src={videoUrl} type={videoFormat} />
-                Your browser does not support the video tag.
-            </video>
-            <div className="mt-2 flex justify-center">
+        <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+        }}>
+            <div style={{
+                backgroundColor: 'white',
+                textAlign: 'center',
+                padding: '20px',
+                borderRadius: '10px',
+                maxWidth: '800px',
+                width: '90%'
+            }}>
+                <h3 style={{ marginBottom: '15px' }}>Video Preview</h3>
+                <div style={{ position: 'relative', width: '100%' }}>
+                    <video
+                        controls
+                        style={{
+                            minWidth: '100%',
+                            maxWidth: '100%',
+                            maxHeight: '70vh',
+                            marginBottom: '15px',
+                            borderRadius: '4px',
+                            backgroundColor: '#000'
+                        }}
+                        key={videoUrls[previewVideo.name]}
+                    >
+                        <source
+                            src={videoUrls[previewVideo.name]}
+                            type={previewVideo.type || 'video/avi'}
+                        />
+                        Your browser does not support the video tag.
+                    </video>
+                    <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        color: 'white',
+                        padding: '5px 10px',
+                        borderRadius: '4px',
+                        fontSize: '0.9em'
+                    }}>
+                        {previewVideo.name}
+                    </div>
+                </div>
                 <button
-                    onClick={handlePlayPause}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    onClick={() => {
+                        setShowPreview(false);
+                        setPreviewVideo(null);
+                    }}
+                    style={{
+                        display: 'block',
+                        margin: '0 auto',
+                        padding: '10px 20px',
+                        backgroundColor: '#f44336',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
                 >
-                    {isPlaying ? 'Pause' : 'Play'}
+                    Close
                 </button>
             </div>
-            {videoFormat === 'video/x-msvideo' && (
-                <div className="mt-2 text-yellow-600 text-center">
-                    Note: AVI format may not be supported by all browsers.
-                    Consider converting to MP4 for better compatibility.
-                </div>
-            )}
         </div>
     );
-};
+}
 
 export default VideoPreview; 
