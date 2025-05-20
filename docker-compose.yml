@@ -1,0 +1,26 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - autovideo
+    networks:
+      - app-network
+
+  autovideo:
+    build: ./autovideo
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./autovideo:/app/autovideo
+    environment:
+      - PYTHONPATH=/app/autovideo
+      - MONGODB_URL=mongodb+srv://huvdev:meqeT3tEs7LiIv0J@cluster0.cncfxde.mongodb.net/
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
