@@ -61,7 +61,7 @@ async def recogonize_video(file: UploadFile = File(...)):
         logger.info(f"Processed video saved to: {processed_path}")
         
         # Get predictions
-        logger.info("Starting video recognition...")
+        logger.info("Starting video recogonition...")
         predictions = produce_by_path(fitted_pipeline, processed_path)
         logger.info(f"Raw predictions: {predictions}")
             

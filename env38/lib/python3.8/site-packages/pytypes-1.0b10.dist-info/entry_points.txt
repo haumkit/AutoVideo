@@ -1,0 +1,3 @@
+[console_scripts]
+typestubs = pytypes.stubfile_2_converter:main
+

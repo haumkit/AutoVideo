@@ -1,6 +1,5 @@
 # Large model files
 fitted_pipeline
-*.pth
 *.pt
 *.ckpt
 *.bin
@@ -23,8 +22,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+
 parts/
 sdist/
 var/
@@ -34,9 +32,7 @@ wheels/
 *.egg
 
 # Virtual environment
-venv/
-env/
-ENV/
+
 
 # IDE files
 .idea/

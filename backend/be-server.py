@@ -12,6 +12,8 @@ from typing import List
 from pydantic import BaseModel
 import subprocess
 import requests
+import aiohttp
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
@@ -19,10 +21,9 @@ logger = logging.getLogger(__name__)
 
 # MongoDB Atlas connection
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb+srv://huvdev:meqeT3tEs7LiIv0J@cluster0.cncfxde.mongodb.net/")
-client = AsyncIOMotorClient(MONGODB_URL)
-db = client.autovideo
-videos_collection = db.videos
-feedback_collection = db.feedback
+client = None
+db = None
+videos_collection = None
 
 # Autovideo server URL
 AUTOVIDEO_SERVER_URL = os.getenv("AUTOVIDEO_SERVER_URL", "http://localhost:9000")
@@ -30,7 +31,8 @@ AUTOVIDEO_SERVER_URL = os.getenv("AUTOVIDEO_SERVER_URL", "http://localhost:9000"
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
-    allow_methods=["POST", "GET"],
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -205,6 +207,70 @@ async def process_single_video(file: UploadFile) -> dict:
         logger.error(f"Error in process_single_video: {str(e)}")
         return {"message": "Error processing video", "error": str(e)}
 
+@app.on_event("startup")
+async def startup_db_client():
+    global client, db, videos_collection
+    try:
+        client = AsyncIOMotorClient(MONGODB_URL)
+        db = client.autovideo
+        videos_collection = db.videos
+        # Test MongoDB connection
+        await db.command("ping")
+        logger.info("Connected to MongoDB Atlas")
+    except Exception as e:
+        logger.error(f"Failed to connect to MongoDB Atlas: {str(e)}")
+        raise
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    if client:
+        client.close()
+        logger.info("Closed MongoDB connection")
+
+@app.post("/upload")
+async def upload_video(file: UploadFile = File(...)):
+    """
+    Upload video and get predictions from AV server
+    """
+    try:
+        # Save video temporarily
+        temp_path = f"uploads/{file.filename}"
+        os.makedirs("uploads", exist_ok=True)
+        
+        with open(temp_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+        logger.info(f"Saved video to {temp_path}")
+
+        # Send to AV server using requests
+        with open(temp_path, "rb") as f:
+            files = {"file": (file.filename, f, "video/mp4")}
+            response = requests.post(f"{AUTOVIDEO_SERVER_URL}/recogonize", files=files)
+            
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="AV server error")
+        result = response.json()
+
+        # Save to MongoDB
+        video_doc = {
+            "filename": file.filename,
+            "upload_time": datetime.utcnow(),
+            "prediction": result
+        }
+        await videos_collection.insert_one(video_doc)
+        logger.info(f"Saved video info to MongoDB: {video_doc}")
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Error processing video: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Clean up
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+            logger.info(f"Removed temporary file: {temp_path}")
+
 @app.post("/recogonize")
 async def recognize_video(file: UploadFile = File(...)):
     return await process_single_video(file)
@@ -229,7 +295,7 @@ async def submit_feedback(feedback: FeedbackModel):
             "comment": feedback.comment,
             "timestamp": datetime.utcnow()
         }
-        await feedback_collection.insert_one(feedback_doc)
+        await videos_collection.insert_one(feedback_doc)
 
         await videos_collection.update_one(
             {"_id": ObjectId(feedback.video_id)},
@@ -247,11 +313,22 @@ async def submit_feedback(feedback: FeedbackModel):
 
 @app.get("/videos")
 async def get_videos():
-    videos = []
-    async for video in videos_collection.find().sort("upload_time", -1):
-        video["_id"] = str(video["_id"])
-        videos.append(video)
-    return videos
+    """
+    Get all videos with their predictions
+    """
+    try:
+        videos = []
+        cursor = videos_collection.find().sort("upload_time", -1)
+        async for video in cursor:
+            # Convert ObjectId to string for JSON serialization
+            video["_id"] = str(video["_id"])
+            # Convert datetime to string
+            video["upload_time"] = video["upload_time"].isoformat()
+            videos.append(video)
+        return videos
+    except Exception as e:
+        logger.error(f"Error getting videos: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/videos/{video_id}")
 async def get_video(video_id: str):

@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: tamu-axolotl
+Version: 2021.4.8
+Summary: 2021.04.08
+Home-page: UNKNOWN
+License: Apache-2.0
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: Apache Software License
+Requires-Dist: tamu-d3m
+Requires-Dist: grpcio
+Requires-Dist: grpcio-tools
+Requires-Dist: grpcio-testing
+Requires-Dist: ray (<=1.0.1.post1)
+Requires-Dist: networkx (==2.4)
+Provides-Extra: cpu
+Requires-Dist: tensorflow (==2.2.0) ; extra == 'cpu'
+Provides-Extra: gpu
+Requires-Dist: tensorflow-gpu (==2.2.0) ; extra == 'gpu'
+
+UNKNOWN
+
+

@@ -1,0 +1,93 @@
+Metadata-Version: 2.1
+Name: tamu-d3m
+Version: 2022.5.23
+Summary: project
+Home-page: https://github.com/tods-doc/tamu_d3m
+Author: Program
+License: Apache-2.0
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: Apache Software License
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: scikit-learn (<=0.24.2,>=0.21.3)
+Requires-Dist: pytypes (>=1.0b5)
+Requires-Dist: frozendict (==1.2)
+Requires-Dist: numpy (<=1.21.2,>=1.16.6)
+Requires-Dist: jsonschema (<=4.0.1,>=3.0.2)
+Requires-Dist: requests (<=2.26.0,>=2.19.1)
+Requires-Dist: rfc3339-validator (<0.2,>=0.1)
+Requires-Dist: rfc3986-validator (<0.2,>=0.1)
+Requires-Dist: webcolors (<=1.11.1,>=1.8.1)
+Requires-Dist: dateparser (<1.2.0,>=0.7.0)
+Requires-Dist: python-dateutil (<=2.8.2,>=2.8.1)
+Requires-Dist: pandas (<=1.3.4,>=1.1.3)
+Requires-Dist: typing-inspect (==0.7.1)
+Requires-Dist: GitPython (<=3.1.24,>=3.1.0)
+Requires-Dist: jsonpath-ng (<=1.5.3,>=1.4.3)
+Requires-Dist: custom-inherit (<=2.3.2,>=2.2.0)
+Requires-Dist: PyYAML (<=5.4.1,>=5.1)
+Requires-Dist: gputil (<=1.4.0,>=1.3.0)
+Requires-Dist: pyrsistent (<=0.18.0,>=0.14.11)
+Requires-Dist: scipy (<=1.7.1,>=1.2.1)
+Requires-Dist: openml (==0.11.0)
+Provides-Extra: tests
+Requires-Dist: asv (==0.4.2) ; extra == 'tests'
+Requires-Dist: docker[tls] (==2.7) ; extra == 'tests'
+Requires-Dist: pypiwin32 (==220) ; (sys_platform == "win32") and extra == 'tests'
+
+# Common code for D3M project
+
+This package provides a core package for D3M project with common code available.
+It contains standard interfaces, reference implementations, and utility implementations.
+
+## Installation
+
+This package works with Python 3.6 and pip 19+. You need to have the following packages installed on the system (for Debian/Ubuntu):
+
+* `libyaml-dev`
+
+You can install latest stable version from [PyPI](https://pypi.org/):
+
+```
+$ pip3 install d3m
+```
+
+To install latest development version:
+
+```
+$ pip3 install -e git+https://gitlab.com/datadrivendiscovery/d3m.git@devel#egg=d3m
+```
+
+When cloning a repository, clone it recursively to get also git submodules:
+
+```
+$ git clone --recursive https://gitlab.com/datadrivendiscovery/d3m.git
+```
+
+## Changelog
+
+See [HISTORY.md](./HISTORY.md) for summary of changes to this package.
+
+## Documentation
+
+Documentation for the package is available at [https://datadrivendiscovery.org/](https://datadrivendiscovery.org/).
+
+## Contributing
+
+See [CODE_STYLE.md](./CODE_STYLE.md) for our coding style and contribution guide. Please ensure any merge requests you open follow this guide.
+
+## Repository structure
+
+`master` branch contains latest stable release of the package.
+`devel` branch is a staging branch for the next release.
+
+Releases are [tagged](https://gitlab.com/datadrivendiscovery/d3m/-/tags).
+
+## About Data Driven Discovery Program
+
+DARPA Data Driven Discovery (D3M) Program is researching ways to get machines to build
+machine learning pipelines automatically. It is split into three layers:
+TA1 (primitives), TA2 (systems which combine primitives automatically into pipelines
+and executes them), and TA3 (end-users interfaces).
+
+
