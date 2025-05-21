@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import FileUploader from './components/FileUploader';
-import VideoPreview from './components/VideoPreview';
 import ProcessingResults from './components/ProcessingResults';
 import HistorySection from './components/HistorySection';
 import VideoDetails from './components/VideoDetails';
 import Feedback from './components/Feedback';
-
 
 function UploadVideo() {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -15,8 +13,6 @@ function UploadVideo() {
   const [history, setHistory] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [previewVideo, setPreviewVideo] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [selectedVideos, setSelectedVideos] = useState(new Set());
 
@@ -36,21 +32,6 @@ function UploadVideo() {
     } else {
       setSelectedVideos(new Set(selectedFiles.map(file => file.name)));
     }
-  };
-
-  const handlePreview = () => {
-    if (selectedVideos.size === 0) {
-      setError("Please select a video to preview");
-      return;
-    }
-    if (selectedVideos.size > 1) {
-      setError("Please select only one video to preview");
-      return;
-    }
-    const videoToPreview = selectedFiles.find(file => selectedVideos.has(file.name));
-    setPreviewVideo(videoToPreview);
-    setShowPreview(true);
-    setError('');
   };
 
   const handleUpload = async () => {
@@ -180,21 +161,6 @@ function UploadVideo() {
           marginBottom: '20px'
         }}>
           <button
-            onClick={handlePreview}
-            disabled={selectedVideos.size === 0}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#2196F3',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: selectedVideos.size > 0 ? 'pointer' : 'not-allowed',
-              opacity: selectedVideos.size > 0 ? 1 : 0.6
-            }}
-          >
-            Preview Selected
-          </button>
-          <button
             onClick={handleUpload}
             disabled={selectedVideos.size === 0}
             style={{
@@ -207,7 +173,7 @@ function UploadVideo() {
               opacity: selectedVideos.size > 0 ? 1 : 0.6
             }}
           >
-            Upload Selected
+            Tải lên
           </button>
         </div>
 
@@ -223,7 +189,7 @@ function UploadVideo() {
             width: '100%'
           }}
         >
-          {showHistory ? 'Hide History' : 'View History'}
+          {showHistory ? 'Ẩn lịch sử' : 'Xem lịch sử'}
         </button>
 
         <ProcessingResults
@@ -243,14 +209,6 @@ function UploadVideo() {
           </div>
         )}
       </div>
-
-      <VideoPreview
-        showPreview={showPreview}
-        setShowPreview={setShowPreview}
-        previewVideo={previewVideo}
-        setPreviewVideo={setPreviewVideo}
-        videoUrls={videoUrls}
-      />
 
       <HistorySection
         showHistory={showHistory}

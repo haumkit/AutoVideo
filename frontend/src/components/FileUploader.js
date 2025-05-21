@@ -5,22 +5,13 @@ function FileUploader({
     setSelectedFiles,
     selectedVideos,
     setSelectedVideos,
-    videoUrls,
-    setVideoUrls,
     handleSelectVideo,
     handleSelectAll
 }) {
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
+        console.log('Selected files:', files);
         setSelectedFiles(files);
-
-        // Create URLs for preview
-        const urls = {};
-        files.forEach(file => {
-            urls[file.name] = URL.createObjectURL(file);
-        });
-        setVideoUrls(urls);
-
         // Reset selected videos
         setSelectedVideos(new Set());
     };
@@ -55,7 +46,7 @@ function FileUploader({
                                 onChange={handleSelectAll}
                                 style={{ marginRight: '10px' }}
                             />
-                            <span>Select All</span>
+                            <span>Chọn tất cả</span>
                         </label>
                     </div>
                     <div style={{
